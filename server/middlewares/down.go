@@ -1,19 +1,25 @@
 package middlewares
 
 import (
-	"strings"
-
+	"fmt"
+	"github.com/alist-org/alist/v3/cmd/flags"
 	"github.com/alist-org/alist/v3/internal/conf"
-	"github.com/alist-org/alist/v3/internal/setting"
-
 	"github.com/alist-org/alist/v3/internal/errs"
 	"github.com/alist-org/alist/v3/internal/model"
 	"github.com/alist-org/alist/v3/internal/op"
+	"github.com/alist-org/alist/v3/internal/setting"
 	"github.com/alist-org/alist/v3/internal/sign"
 	"github.com/alist-org/alist/v3/pkg/utils"
 	"github.com/alist-org/alist/v3/server/common"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 )
 
 func Down(c *gin.Context) {
@@ -38,6 +44,13 @@ func Down(c *gin.Context) {
 		}
 	}
 	c.Next()
+	nowTime := time.Now().Format("2006-01-02 15:04:05.0000")
+	downloadIp := c.ClientIP()
+	decodedDownloadReqURL, err := url.QueryUnescape(c.Request.URL.String())
+	downMethod := c.Request.Method
+	downStatusCode := strconv.Itoa(c.Writer.Status())
+	err = AppendToFile(flags.DataDir, nowTime+", "+downMethod+", "+downStatusCode+", "+downloadIp+", "+decodedDownloadReqURL+"\n")
+	log.Printf("cannot record download info,  %v", err)
 }
 
 // TODO: implement
@@ -45,7 +58,30 @@ func Down(c *gin.Context) {
 func parsePath(path string) string {
 	return utils.FixAndCleanPath(path)
 }
-
+func AppendToFile(filePath string, content string) error {
+	dir := filepath.Dir(filePath)
+	downloadCountFileName := "download.log"
+	downloadFilePath := filepath.Join(dir, "data", "log", downloadCountFileName)
+	err := os.MkdirAll(filepath.Dir(downloadFilePath), 0755)
+	if err != nil {
+		return fmt.Errorf("can not mkdir: %v", err)
+	}
+	file, err := os.OpenFile(downloadFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("can not create file: %v", err)
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Printf("can not close file: %v", err)
+		}
+	}(file)
+	_, err = file.WriteString(content)
+	if err != nil {
+		return fmt.Errorf("can not write file: %v", err)
+	}
+	return nil
+}
 func needSign(meta *model.Meta, path string) bool {
 	if setting.GetBool(conf.SignAll) {
 		return true
