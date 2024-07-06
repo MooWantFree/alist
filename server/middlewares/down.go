@@ -41,7 +41,7 @@ func Down(c *gin.Context) {
 		}
 	}
 	c.Next()
-	insert(c)
+	insertDownloadCounter(c)
 
 }
 
@@ -50,11 +50,22 @@ func Down(c *gin.Context) {
 func parsePath(path string) string {
 	return utils.FixAndCleanPath(path)
 }
-func insert(c *gin.Context) {
+func insertDownloadCounter(c *gin.Context) {
 	decodedDownloadReqURL, err := url.QueryUnescape(c.Request.URL.String())
+	if err != nil {
+		log.Fatalf("failed to decode URL: %+v", err)
+		return
+	}
+	splitPathAndQuery := func(path string) (string, string) {
+		parts := strings.SplitN(path, "?", 2)
+		if len(parts) == 2 {
+			return parts[0], parts[1]
+		}
+		return parts[0], ""
+	}
 	basePath, _ := splitPathAndQuery(decodedDownloadReqURL)
 	fileName := filepath.Base(basePath)
-	err = db.InsertDownloadColumn(&model.Count{
+	err = db.InsertDownloadColumn(&model.Counter{
 		FileName:       fileName,
 		FilePath:       basePath,
 		Operation:      c.Request.Method,
@@ -66,13 +77,7 @@ func insert(c *gin.Context) {
 		log.Fatalf("failed to create user: %+v", err)
 	}
 }
-func splitPathAndQuery(path string) (string, string) {
-	parts := strings.SplitN(path, "?", 2)
-	if len(parts) == 2 {
-		return parts[0], parts[1]
-	}
-	return parts[0], ""
-}
+
 func needSign(meta *model.Meta, path string) bool {
 	if setting.GetBool(conf.SignAll) {
 		return true
