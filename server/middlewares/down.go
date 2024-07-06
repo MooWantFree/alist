@@ -1,9 +1,8 @@
 package middlewares
 
 import (
-	"fmt"
-	"github.com/alist-org/alist/v3/cmd/flags"
 	"github.com/alist-org/alist/v3/internal/conf"
+	"github.com/alist-org/alist/v3/internal/db"
 	"github.com/alist-org/alist/v3/internal/errs"
 	"github.com/alist-org/alist/v3/internal/model"
 	"github.com/alist-org/alist/v3/internal/op"
@@ -15,9 +14,7 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"net/url"
-	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -44,13 +41,8 @@ func Down(c *gin.Context) {
 		}
 	}
 	c.Next()
-	nowTime := time.Now().Format("2006-01-02 15:04:05.0000")
-	downloadIp := c.ClientIP()
-	decodedDownloadReqURL, err := url.QueryUnescape(c.Request.URL.String())
-	downMethod := c.Request.Method
-	downStatusCode := strconv.Itoa(c.Writer.Status())
-	err = AppendToFile(flags.DataDir, nowTime+", "+downMethod+", "+downStatusCode+", "+downloadIp+", "+decodedDownloadReqURL+"\n")
-	log.Printf("cannot record download info,  %v", err)
+	insertDownloadCounter(c)
+
 }
 
 // TODO: implement
@@ -58,30 +50,34 @@ func Down(c *gin.Context) {
 func parsePath(path string) string {
 	return utils.FixAndCleanPath(path)
 }
-func AppendToFile(filePath string, content string) error {
-	dir := filepath.Dir(filePath)
-	downloadCountFileName := "download.log"
-	downloadFilePath := filepath.Join(dir, "data", "log", downloadCountFileName)
-	err := os.MkdirAll(filepath.Dir(downloadFilePath), 0755)
+func insertDownloadCounter(c *gin.Context) {
+	decodedDownloadReqURL, err := url.QueryUnescape(c.Request.URL.String())
 	if err != nil {
-		return fmt.Errorf("can not mkdir: %v", err)
+		log.Fatalf("failed to decode URL: %+v", err)
+		return
 	}
-	file, err := os.OpenFile(downloadFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return fmt.Errorf("can not create file: %v", err)
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-			log.Printf("can not close file: %v", err)
+	splitPathAndQuery := func(path string) (string, string) {
+		parts := strings.SplitN(path, "?", 2)
+		if len(parts) == 2 {
+			return parts[0], parts[1]
 		}
-	}(file)
-	_, err = file.WriteString(content)
-	if err != nil {
-		return fmt.Errorf("can not write file: %v", err)
+		return parts[0], ""
 	}
-	return nil
+	basePath, _ := splitPathAndQuery(decodedDownloadReqURL)
+	fileName := filepath.Base(basePath)
+	err = db.InsertDownloadColumn(&model.Counter{
+		FileName:       fileName,
+		FilePath:       basePath,
+		Operation:      c.Request.Method,
+		DownloadTime:   time.Now(),
+		RequestIP:      c.ClientIP(),
+		HttpStatusCode: c.Writer.Status(),
+	})
+	if err != nil {
+		log.Fatalf("failed to create user: %+v", err)
+	}
 }
+
 func needSign(meta *model.Meta, path string) bool {
 	if setting.GetBool(conf.SignAll) {
 		return true

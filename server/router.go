@@ -138,6 +138,9 @@ func admin(g *gin.RouterGroup) {
 	index.POST("/stop", middlewares.SearchIndex, handles.StopIndex)
 	index.POST("/clear", middlewares.SearchIndex, handles.ClearIndex)
 	index.GET("/progress", middlewares.SearchIndex, handles.GetProgress)
+
+	counter := g.Group("/counter")
+	counter.POST("/get", handles.GetCounter)
 }
 
 func _fs(g *gin.RouterGroup) {
