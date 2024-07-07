@@ -21,25 +21,25 @@ Request body:
 
 ```json
 {
-  "index": 1,
-  "pagination": 1,
-  "order_by": "download_time",
+  "current_page": 1,
+  "page_size": 1,
+  "sort_key": "download_time",
   "reverse": false,
   "file_name": "fileName",
   "ip_address": "1.1.1.1",
-  "http_status_code": 200
+  "status_code": 200
 }
 ```
 
 | Parameter        | Type   | Required | Description                   |
 | ---------------- | ------ | -------- | ----------------------------- |
-| index            | int    | y        | Current page number           |
-| pagination       | int    | y        | Page size                     |
-| order_by         | string | y        | Column name for sorting       |
+| current_page            | int    | y        | Current page number           |
+| page_size       | int    | y        | Page size                     |
+| sort_key         | string | y        | Column name for sorting       |
 | reverse          | bool   | y        | Descending or ascending order |
 | file_name        | string | n        | File name without path        |
 | ip_address       | string | n        | download request IP           |
-| http_status_code | int    | n        | http status code              |
+| status_code | int    | n        | http status code              |
 
 ## Usage
 ![image](https://github.com/MooWantFree/alist/assets/46401523/d32227fc-008b-4017-bad9-dcb1e396d4ac)

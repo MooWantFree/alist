@@ -19,24 +19,24 @@ APIは以下の通りです：
 
 ```json
 {
-  "index": 1,
-  "pagination": 1,
-  "order_by": "download_time",
+  "current_page": 1,
+  "page_size": 1,
+  "sort_key": "download_time",
   "reverse": false,
   "file_name": "fileName",
   "ip_address": "1.1.1.1",
-  "http_status_code": 200
+  "status_code": 200
 }
 ```
 | パラメータ            | 型      | 必須  | 説明             |
 |------------------|--------|-----|----------------|
-| index            | int    | y   | 現在のページ番号       |
-| pagination       | int    | はい  | ページサイズ         |
-| order_by         | string | はい  | ソートする列名        |
+| current_page            | int    | y   | 現在のページ番号       |
+| page_size       | int    | はい  | ページサイズ         |
+| sort_key         | string | はい  | ソートする列名        |
 | reverse          | bool   | はい  | 降順または昇順        |
 | file_name        | string | いいえ | パスを含まないファイル名   |
 | ip_address       | string | いいえ | ダウンロードリクエストのIP |
-| http_status_code | int    | いいえ | HTTPステータスコード   |
+| status_code | int    | いいえ | HTTPステータスコード   |
 
 ## 使い方
 

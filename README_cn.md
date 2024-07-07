@@ -19,25 +19,25 @@ api为
 
 ```json
 {
-  "index": 1,
-  "pagination": 1,
-  "order_by": "download_time",
+  "current_page": 1,
+  "page_size": 1,
+  "sort_key": "download_time",
   "reverse": false,
   "file_name": "fileName",
   "ip_address": "1.1.1.1",
-  "http_status_code": 200
+  "status_code": 200
 }
 ```
 
 | 参数               | 类型     | 必填 | 描述        |
 |------------------|--------|----|-----------|
-| index            | int    | 是  | 当前页码      |
-| pagination       | int    | 是  | 页面大小      |
-| order_by         | string | 是  | 排序的列名     |
+| current_page            | int    | 是  | 当前页码      |
+| page_size       | int    | 是  | 页面大小      |
+| sort_key         | string | 是  | 排序的列名     |
 | reverse          | bool   | 是  | 降序或升序     |
 | file_name        | string | 否  | 不含路径的文件名  |
 | ip_address       | string | 否  | 下载请求的IP地址 |
-| http_status_code | int    | 否  | HTTP状态码   |
+| status_code | int    | 否  | HTTP状态码   |
 
 ## 使用方法
 

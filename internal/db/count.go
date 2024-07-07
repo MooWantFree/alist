@@ -22,9 +22,9 @@ func sortMethod(reverse bool, orderBy string) string {
 	orderClause := fmt.Sprintf("%s %s", orderBy, orderDirection)
 	return orderClause
 }
-func GetDownloadColumn(index int, pagination int, orderBy string, reverse bool, fileName, IPAddress string, httpStatusCode int) ([]model.Counter, error) {
+func GetDownloadColumn(currentPage int, pageSize int, sortKey string, reverse bool, fileName, IPAddress string, httpStatusCode int) ([]model.Counter, error) {
 	var counts []model.Counter
-	orderClause := sortMethod(reverse, orderBy)
+	orderClause := sortMethod(reverse, sortKey)
 	query := db.Model(&model.Counter{})
 	if fileName != "" {
 		query = query.Where("file_name LIKE ?", "%"+fileName+"%")
@@ -35,6 +35,6 @@ func GetDownloadColumn(index int, pagination int, orderBy string, reverse bool, 
 	if httpStatusCode != 0 {
 		query = query.Where("http_status_code = ?", httpStatusCode)
 	}
-	err := query.Order(orderClause).Limit(pagination).Offset((index - 1) * pagination).Find(&counts).Error
+	err := query.Order(orderClause).Limit(pageSize).Offset((currentPage - 1) * pageSize).Find(&counts).Error
 	return counts, err
 }
