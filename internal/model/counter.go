@@ -38,6 +38,9 @@ type CounterPage struct {
 	Pagination int    `json:"pagination" gorm:"not null"`
 	OrderBy    string `json:"order_by" gorm:"not null"`
 	Reverse    bool   `json:"reverse" gorm:"not null"`
+	FileName   string `json:"file_name"`
+	IPAddress  string `json:"ip_address"`
+	HttpStatus int    `json:"http_status_code"`
 }
 
 func (c *CounterPage) Validate() {

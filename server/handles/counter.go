@@ -16,7 +16,7 @@ func GetCounter(c *gin.Context) {
 	}
 	counterPage.Validate()
 	log.Debugf("%+v", counterPage)
-	downloadCounterColumn, err := db.GetDownloadColumn(counterPage.Index, counterPage.Pagination, counterPage.OrderBy, counterPage.Reverse)
+	downloadCounterColumn, err := db.GetDownloadColumn(counterPage.Index, counterPage.Pagination, counterPage.OrderBy, counterPage.Reverse, counterPage.FileName, counterPage.IPAddress, counterPage.HttpStatus)
 	if err != nil {
 		common.ErrorResp(c, err, 500)
 		return
