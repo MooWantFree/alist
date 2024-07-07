@@ -27,13 +27,13 @@ func GetDownloadColumn(currentPage int, pageSize int, sortKey string, reverse bo
 	orderClause := sortMethod(reverse, sortKey)
 	query := db.Model(&model.Counter{})
 	if fileName != "" {
-		query = query.Where("file_name LIKE ?", "%"+fileName+"%")
+		query = query.Where(columnName("file_name")+" LIKE ?", "%"+fileName+"%")
 	}
 	if IPAddress != "" {
-		query = query.Where("request_ip LIKE ?", "%"+IPAddress+"%")
+		query = query.Where(columnName("ip_address")+" LIKE ?", "%"+IPAddress+"%")
 	}
 	if httpStatusCode != 0 {
-		query = query.Where("http_status_code = ?", httpStatusCode)
+		query = query.Where(columnName("status_code")+" = ?", httpStatusCode)
 	}
 	err := query.Order(orderClause).Limit(pageSize).Offset((currentPage - 1) * pageSize).Find(&counts).Error
 	return counts, err
