@@ -1,3 +1,4 @@
+[English](./README.md) | 中文 | [日本語](./README_ja.md) | [Contributing](./CONTRIBUTING.md) | [CODE_OF_CONDUCT](./CODE_OF_CONDUCT.md)
 ## 介绍
 
 具体alist介绍请见[alist官方仓库](https://github.com/alist-org/alist)
@@ -21,18 +22,26 @@ api为
   "index": 1,
   "pagination": 1,
   "order_by": "download_time",
-  "reverse": false
+  "reverse": false,
+  "file_name": "fileName",
+  "ip_address": "1.1.1.1",
+  "http_status_code": 200
 }
 ```
 
-| 参数名        | 类型     | 说明       |
-|------------|--------|----------|
-| index      | int    | 当前页数     |
-| pagination | int    | 分页大小     |
-| order_by   | string | 用来排序的表头名 |
-| reverse    | bool   | 降序or升序   |
+| 参数               | 类型     | 必填 | 描述        |
+|------------------|--------|----|-----------|
+| index            | int    | 是  | 当前页码      |
+| pagination       | int    | 是  | 页面大小      |
+| order_by         | string | 是  | 排序的列名     |
+| reverse          | bool   | 是  | 降序或升序     |
+| file_name        | string | 否  | 不含路径的文件名  |
+| ip_address       | string | 否  | 下载请求的IP地址 |
+| http_status_code | int    | 否  | HTTP状态码   |
 
 ## 使用方法
+
+![image](https://github.com/MooWantFree/alist/assets/46401523/f58ff682-d247-49f3-a069-aade17b1f60b)
 
 在Manage界面新增一个条目为Counter, 点击后即可查看下载统计信息
 
