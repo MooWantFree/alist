@@ -66,16 +66,16 @@ func insertDownloadCounter(c *gin.Context) {
 	basePath, _ := splitPathAndQuery(decodedDownloadReqURL)
 	fileName := filepath.Base(basePath)
 	err = db.InsertDownloadColumn(&model.Counter{
-		FileName:       fileName,
-		FilePath:       basePath,
-		Operation:      c.Request.Method,
-		DownloadTime:   time.Now(),
-		RequestIP:      c.ClientIP(),
-		HttpStatusCode: c.Writer.Status(),
+		FileName:   fileName,
+		FilePath:   basePath,
+		Time:       time.Now(),
+		IPAddress:  c.ClientIP(),
+		StatusCode: c.Writer.Status(),
 	})
 	if err != nil {
-		log.Fatalf("failed to create user: %+v", err)
+		log.Fatalf("failed to insert column: %+v", err)
 	}
+	log.Info("insert 1 column to download counter")
 }
 
 func needSign(meta *model.Meta, path string) bool {
