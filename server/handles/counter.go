@@ -16,13 +16,13 @@ func GetCounter(c *gin.Context) {
 	}
 	counterPage.Validate()
 	log.Debugf("%+v", counterPage)
-	downloadCounterColumn, err := db.GetDownloadColumn(counterPage.CurrentPage, counterPage.PageSize, counterPage.SortKey, counterPage.Reverse, counterPage.FileName, counterPage.IPAddress, counterPage.StatusCode)
+	downloadCounterColumn, totalItems, err := db.GetDownloadColumn(counterPage.CurrentPage, counterPage.PageSize, counterPage.SortKey, counterPage.Reverse, counterPage.FileName, counterPage.IPAddress, counterPage.StatusCode)
 	if err != nil {
 		common.ErrorResp(c, err, 500)
 		return
 	}
 	common.SuccessResp(c, common.PageResp{
 		Content: downloadCounterColumn,
-		Total:   int64(len(downloadCounterColumn)),
+		Total:   totalItems,
 	})
 }
