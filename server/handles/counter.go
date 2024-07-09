@@ -23,6 +23,6 @@ func GetCounter(c *gin.Context) {
 	}
 	common.SuccessResp(c, common.PageResp{
 		Content: downloadCounterColumn,
-		Total:   totalItems,
+		Total:   int64(totalItems),
 	})
 }

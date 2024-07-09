@@ -22,12 +22,20 @@ func sortMethod(reverse bool, orderBy string) string {
 	orderClause := fmt.Sprintf("%s %s", orderBy, orderDirection)
 	return orderClause
 }
-func GetDownloadColumn(currentPage int, pageSize int, sortKey string, reverse bool, fileName, IPAddress string, httpStatusCode int) ([]model.Counter, int64, error) {
+func GetDownloadColumn(currentPage int, pageSize int, sortKey string, reverse bool, fileName, IPAddress string, httpStatusCode int) ([]model.Counter, int, error) {
 	var counts []model.Counter
 	orderClause := sortMethod(reverse, sortKey)
 	query := db.Model(&model.Counter{})
-	var totalItems int64
-	err := db.Model(&model.Counter{}).Count(&totalItems).Error
+	var tempTotalItems int64
+	err := db.Model(&model.Counter{}).Count(&tempTotalItems).Error
+	totalItems := int(tempTotalItems)
+	totalItems = func(a, b int) int {
+		if a%b == 0 {
+			return a / b
+		} else {
+			return a/b + 1
+		}
+	}(totalItems, pageSize)
 	if err != nil {
 		return nil, 0, err
 	}
