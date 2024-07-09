@@ -66,11 +66,10 @@ func insertDownloadCounter(c *gin.Context) {
 	basePath, _ := splitPathAndQuery(decodedDownloadReqURL)
 	fileName := filepath.Base(basePath)
 	err = db.InsertDownloadColumn(&model.Counter{
-		FileName:   fileName,
-		FilePath:   basePath,
-		Time:       time.Now(),
-		IPAddress:  c.ClientIP(),
-		StatusCode: c.Writer.Status(),
+		FileName:  fileName,
+		FilePath:  basePath,
+		Time:      time.Now(),
+		IPAddress: c.ClientIP(),
 	})
 	if err != nil {
 		log.Fatalf("failed to insert column: %+v", err)

@@ -25,12 +25,11 @@ func (h *JSONHeader) Scan(value interface{}) error {
 }
 
 type Counter struct {
-	ID         uint      `json:"id" gorm:"primaryKey"` // unique key
-	FileName   string    `json:"file_name"`            // file name
-	FilePath   string    `json:"file_path"`            // file path
-	Time       time.Time `json:"time"`                 // download time
-	IPAddress  string    `json:"ip_address"`           // request IP
-	StatusCode int       `json:"status_code"`          // HTTP status code
+	ID        uint      `json:"id" gorm:"primaryKey"` // unique key
+	FileName  string    `json:"file_name"`            // file name
+	FilePath  string    `json:"file_path"`            // file path
+	Time      time.Time `json:"time"`                 // download time
+	IPAddress string    `json:"ip_address"`           // request IP
 }
 type CounterPage struct {
 	CurrentPage int    `json:"current_page" gorm:"primaryKey"`
@@ -39,7 +38,6 @@ type CounterPage struct {
 	Reverse     bool   `json:"reverse" gorm:"not null"`
 	FileName    string `json:"file_name"`
 	IPAddress   string `json:"ip_address"`
-	StatusCode  int    `json:"status_code"`
 }
 
 func (c *CounterPage) Validate() {
