@@ -25,12 +25,12 @@ func (h *JSONHeader) Scan(value interface{}) error {
 }
 
 type Counter struct {
-	ID         uint      `json:"id" gorm:"primaryKey"`        // unique key
-	FileName   string    `json:"file_name" gorm:"not null"`   // file name
-	FilePath   string    `json:"file_path" gorm:"not null"`   // file path
-	Time       time.Time `json:"time" gorm:"not null"`        // download time
-	IPAddress  string    `json:"ip_address" gorm:"not null"`  // request IP
-	StatusCode int       `json:"status_code" gorm:"not null"` // HTTP status code
+	ID         uint      `json:"id" gorm:"primaryKey"` // unique key
+	FileName   string    `json:"file_name"`            // file name
+	FilePath   string    `json:"file_path"`            // file path
+	Time       time.Time `json:"time"`                 // download time
+	IPAddress  string    `json:"ip_address"`           // request IP
+	StatusCode int       `json:"status_code"`          // HTTP status code
 }
 type CounterPage struct {
 	CurrentPage int    `json:"current_page" gorm:"primaryKey"`
